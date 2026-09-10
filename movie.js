@@ -1660,6 +1660,11 @@ function updatePersonHeader() {
     );
 
 
+    document.body.classList.remove(
+      "person-view"
+    );
+
+
     personTabs.innerHTML =
       "";
 
@@ -1675,6 +1680,11 @@ function updatePersonHeader() {
 
   personHeader.classList.add(
     "visible"
+  );
+
+
+  document.body.classList.add(
+    "person-view"
   );
 
 
