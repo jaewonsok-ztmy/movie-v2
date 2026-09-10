@@ -11,6 +11,153 @@ const TMDB_BASE_URL =
 const TMDB_IMAGE_BASE =
   "https://image.tmdb.org/t/p/w185";
 
+const TMDB_DETAIL_IMAGE_BASE =
+  "https://image.tmdb.org/t/p/w342";
+
+
+/* =====================================
+   LOCALIZED POSTERS
+   - Korean films: Korean poster first
+   - Japanese films: Japanese poster first
+   - Other supported languages follow the same rule
+   - Falls back to English/default poster
+===================================== */
+
+const localizedPosterCache = new Map();
+
+function getPreferredPosterLanguage(movie) {
+
+  const language = movie?.original_language || "en";
+
+  const supported = new Set([
+    "ko", "ja", "zh", "fr", "de", "es", "it"
+  ]);
+
+  return supported.has(language)
+    ? language
+    : "en";
+
+}
+
+async function resolveLocalizedPosterPath(movie) {
+
+  if (!movie?.id || !movie?.poster_path) {
+    return movie?.poster_path || null;
+  }
+
+  const preferredLanguage =
+    getPreferredPosterLanguage(movie);
+
+  // English/default titles already receive a suitable poster from TMDB.
+  // Avoid an extra API request for them.
+  if (preferredLanguage === "en") {
+    return movie.poster_path;
+  }
+
+  if (localizedPosterCache.has(movie.id)) {
+    return localizedPosterCache.get(movie.id);
+  }
+
+  const promise = (async function () {
+
+    try {
+
+      const data = await fetchJson(
+        `${TMDB_BASE_URL}/movie/${movie.id}/images` +
+        `?api_key=${TMDB_API_KEY}` +
+        `&include_image_language=${preferredLanguage},en,null`
+      );
+
+      const posters = data?.posters || [];
+
+      const preferred = posters.find(function (poster) {
+        return poster.iso_639_1 === preferredLanguage;
+      });
+
+      const english = posters.find(function (poster) {
+        return poster.iso_639_1 === "en";
+      });
+
+      const textless = posters.find(function (poster) {
+        return poster.iso_639_1 === null;
+      });
+
+      return (
+        preferred?.file_path ||
+        english?.file_path ||
+        textless?.file_path ||
+        movie.poster_path
+      );
+
+    }
+    catch (error) {
+      console.warn("Localized poster fallback:", movie.id, error);
+      return movie.poster_path;
+    }
+
+  })();
+
+  localizedPosterCache.set(movie.id, promise);
+
+  return promise;
+
+}
+
+const localizedPosterObserver =
+  "IntersectionObserver" in window
+    ? new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+
+            const image = entry.target;
+            localizedPosterObserver.unobserve(image);
+
+            const movieId = Number(image.dataset.movieId);
+            const movie = currentMovies.find(function (item) {
+              return Number(item.id) === movieId;
+            });
+
+            if (!movie) return;
+
+            resolveLocalizedPosterPath(movie).then(function (path) {
+              if (!path || !image.isConnected) return;
+              image.src = TMDB_IMAGE_BASE + path;
+            });
+          });
+        },
+        {
+          root: null,
+          rootMargin: "500px"
+        }
+      )
+    : null;
+
+function applyLocalizedPoster(image, movie) {
+
+  image.dataset.movieId = movie.id;
+
+  const preferredLanguage =
+    getPreferredPosterLanguage(movie);
+
+  // Start with TMDB's normal poster so nothing appears blank.
+  image.src = TMDB_IMAGE_BASE + movie.poster_path;
+
+  if (preferredLanguage === "en") {
+    return;
+  }
+
+  if (localizedPosterObserver) {
+    localizedPosterObserver.observe(image);
+    return;
+  }
+
+  resolveLocalizedPosterPath(movie).then(function (path) {
+    if (path) image.src = TMDB_IMAGE_BASE + path;
+  });
+
+}
+
 
 /* =====================================
    ELEMENTS
@@ -1163,9 +1310,10 @@ function createPoster(
       "async";
 
 
-    image.src =
-      TMDB_IMAGE_BASE +
-      movie.poster_path;
+    applyLocalizedPoster(
+      image,
+      movie
+    );
 
 
     image.alt =
@@ -1335,9 +1483,10 @@ function renderMovies(
           "async";
 
 
-        image.src =
-          TMDB_IMAGE_BASE +
-          movie.poster_path;
+        applyLocalizedPoster(
+          image,
+          movie
+        );
 
 
         image.alt =
@@ -2493,8 +2642,19 @@ async function showMovieInfo(
 
 
     panelPoster.src =
-      TMDB_IMAGE_BASE +
+      TMDB_DETAIL_IMAGE_BASE +
       movie.poster_path;
+
+    resolveLocalizedPosterPath(movie).then(function (path) {
+      if (
+        path &&
+        activePanelMovieId === movie.id
+      ) {
+        panelPoster.src =
+          TMDB_DETAIL_IMAGE_BASE +
+          path;
+      }
+    });
 
   }
 
