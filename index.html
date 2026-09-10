@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>MOVIE ARCHIVE</title>
+
+  <link
+    rel="stylesheet"
+    href="movie.css"
+  >
+</head>
+
+<body>
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+
+  <header class="header">
+
+    <div class="header-left">
+
+      <button
+        id="backButton"
+        class="back-button"
+        type="button"
+      >
+        ← BACK
+      </button>
+
+      <div class="logo">
+        MOVIE ARCHIVE
+      </div>
+
+    </div>
+
+    <button
+      id="searchButton"
+      class="search-button"
+      type="button"
+    >
+      SEARCH
+    </button>
+
+  </header>
+
+
+  <!-- =========================
+       SEARCH
+  ========================== -->
+
+  <div
+    id="searchBox"
+    class="search-box"
+  >
+
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="SEARCH MOVIE / PERSON..."
+      autocomplete="off"
+    >
+
+    <button
+      id="closeSearchButton"
+      class="close-search"
+      type="button"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+  <!-- =========================
+       PERSON FILMOGRAPHY HEADER
+  ========================== -->
+
+  <div
+    id="personHeader"
+    class="person-header"
+  >
+
+    <div
+      id="personName"
+      class="person-name"
+    ></div>
+
+
+    <div
+      id="personTabs"
+      class="person-tabs"
+    ></div>
+
+  </div>
+
+
+  <!-- =========================
+       MOVIE CANVAS
+  ========================== -->
+
+  <main id="viewport">
+
+    <div id="world"></div>
+
+  </main>
+
+
+  <!-- =========================
+       MOVIE INFO PANEL
+  ========================== -->
+
+  <aside
+    id="moviePanel"
+    class="movie-panel"
+  >
+
+    <button
+      id="closePanelButton"
+      class="close-panel"
+      type="button"
+    >
+      ×
+    </button>
+
+
+    <div class="panel-scroll">
+
+      <div class="panel-poster-wrap">
+
+        <img
+          id="panelPoster"
+          class="panel-poster"
+          src=""
+          alt=""
+        >
+
+      </div>
+
+
+      <div class="panel-content">
+
+        <h1 id="panelTitle"></h1>
+
+
+        <div
+          id="panelMeta"
+          class="panel-meta"
+        ></div>
+
+
+        <!-- DIRECTOR -->
+
+        <section class="panel-section">
+
+          <div class="section-label">
+            DIRECTOR
+          </div>
+
+          <div
+            id="panelDirector"
+            class="section-content"
+          ></div>
+
+        </section>
+
+
+        <!-- WRITING -->
+
+        <section class="panel-section">
+          <div class="section-label">WRITING</div>
+          <div id="panelWriting" class="credit-list"></div>
+        </section>
+
+        <!-- PRODUCTION -->
+
+        <section class="panel-section">
+          <div class="section-label">PRODUCTION</div>
+          <div id="panelProduction" class="credit-list"></div>
+        </section>
+
+        <!-- ACTING -->
+
+        <section class="panel-section">
+          <div class="section-label">ACTING</div>
+          <div id="panelActing" class="credit-list"></div>
+        </section>
+
+        <!-- CAST -->
+
+        <section class="panel-section">
+
+          <div class="section-label">
+            CAST
+          </div>
+
+          <div
+            id="panelCast"
+            class="cast-list"
+          ></div>
+
+        </section>
+<!-- MUSIC -->
+
+<section class="panel-section">
+
+  <div class="section-label">
+    MUSIC
+  </div>
+
+  <div
+    id="panelMusic"
+    class="section-content"
+  ></div>
+
+</section>
+
+        <!-- GENRE -->
+
+        <section class="panel-section">
+
+          <div class="section-label">
+            GENRE
+          </div>
+
+          <div
+            id="panelGenres"
+            class="section-content"
+          ></div>
+
+        </section>
+
+
+        <!-- STORY 
+
+        <section class="panel-section">
+
+          <div class="section-label">
+            STORY
+          </div>
+
+          <div
+            id="panelOverview"
+            class="overview"
+          ></div>
+
+        </section>
+
+-->
+        <!-- OST -->
+
+        <section class="panel-section">
+
+          <div class="section-label">
+            OST
+          </div>
+
+          <div class="ost-description">
+            Search for this movie's soundtrack
+          </div>
+
+
+          <div class="ost-buttons">
+
+            <a
+              id="spotifyButton"
+              class="ost-button"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              SPOTIFY ↗
+            </a>
+
+            <a
+              id="youtubeButton"
+              class="ost-button"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              YOUTUBE ↗
+            </a>
+
+          </div>
+
+        </section>
+
+
+        <div class="open-hint">
+
+          CLICK DIRECTOR / ACTOR FOR FILMOGRAPHY
+
+          <br><br>
+
+          DOUBLE CLICK POSTER TO OPEN
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =========================
+       HELP
+  ========================== -->
+
+  <div class="help-text">
+
+    DRAG TO MOVE · SCROLL TO ZOOM · CLICK FOR INFO · DOUBLE CLICK TO OPEN
+
+  </div>
+
+
+  <script src="movie.js"></script>
+
+</body>
+
+</html>
